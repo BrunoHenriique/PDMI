@@ -19,7 +19,6 @@ export default function Sete() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Campo E-mail */}
       <Text style={styles.label}>E-mail</Text>
       <TextInput
         style={styles.input}
@@ -32,7 +31,6 @@ export default function Sete() {
         keyboardType="email-address"
       />
 
-      {/* Campo Senha */}
       <Text style={styles.label}>Senha</Text>
       <TextInput
         style={styles.input}
@@ -43,7 +41,6 @@ export default function Sete() {
         maxLength={8}
       />
 
-      {/* Botões */}
       <View style={styles.buttonsContainer}>
         <TouchableOpacity style={styles.buttonLogin} onPress={handleLogin}>
           <Text style={styles.buttonText}>Logar</Text>
@@ -54,7 +51,6 @@ export default function Sete() {
         </TouchableOpacity>
       </View>
 
-      {/* Resultado */}
       {resultado ? <Text style={styles.result}>{resultado}</Text> : null}
     </SafeAreaView>
   );

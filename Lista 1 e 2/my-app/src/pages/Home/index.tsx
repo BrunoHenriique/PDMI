@@ -32,7 +32,7 @@ export default function Home() {
           source={require("../../assets/Fatec_jac.png")}
           style={styles.logo}
         />
-        <Text style={styles.title}>HOME</Text>
+        <Text style={styles.title}>Inicio</Text>
         <View style={styles.grid}>
           {botoes.map((botao) => (
             <TouchableOpacity
