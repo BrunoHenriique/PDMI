@@ -1,0 +1,12 @@
+node_modules
+
+/dist/
+
+/src/generated/prisma
+
+prisma/migrations/
+
+node_modules/@prisma/client/
+
+prisma/.env
+

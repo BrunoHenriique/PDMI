@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UsuarioTipo {
+  ALUNO
+  PROFESSOR
+}
+
+enum NotificationType {
+  aviso
+  comunicado
+  lembrete
+  urgente
+}
+
+enum TargetAudience {
+  meus_alunos
+  todos_alunos
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nome      String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(60)
+  senha     String   @db.VarChar(60) 
+  tipo      UsuarioTipo
+  aluno     Aluno?   @relation("Aluno")
+  professor Professor? @relation("Professor")
+}
+
+model Aluno {
+  usuarioId           Int                   @id
+  matricula           String                @unique @db.VarChar(20)
+  usuario             Usuario               @relation("Aluno", fields: [usuarioId], references: [id])
+  disciplinas         MatriculaAluno[]
+  notificationReads   NotificationRead[]   
+}
+
+model Professor {
+  usuarioId     Int           @id
+  usuario       Usuario       @relation("Professor", fields: [usuarioId], references: [id])
+  disciplinas   Professor_has_Disciplina[] 
+  notifications Notification[]
+}
+
+model Disciplina {
+  id          Int                        @id @default(autoincrement())
+  descricao   String                     @db.VarChar(45)
+  professores Professor_has_Disciplina[] 
+  alunos      MatriculaAluno[]           
+}
+
+model Professor_has_Disciplina {
+  id           Int       @id @default(autoincrement())
+  professorId  Int
+  disciplinaId Int
+
+  professor  Professor  @relation(fields: [professorId], references: [usuarioId])
+  disciplina Disciplina @relation(fields: [disciplinaId], references: [id])
+
+  @@unique([professorId, disciplinaId])
+}
+
+model MatriculaAluno {
+  id           Int        @id @default(autoincrement())
+  alunoId      Int
+  disciplinaId Int
+  nota         Float?
+
+  aluno      Aluno      @relation(fields: [alunoId], references: [usuarioId])
+  disciplina Disciplina @relation(fields: [disciplinaId], references: [id])
+
+  @@unique([alunoId, disciplinaId])
+}
+
+model Notification {
+  id              Int              @id @default(autoincrement())
+  professorId     Int
+  title           String           @db.VarChar(255)
+  message         String           @db.Text
+  type            NotificationType @default(aviso)
+  target_audience TargetAudience   @default(meus_alunos)
+  is_active       Boolean          @default(true)
+  expires_at      DateTime?
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+
+  professor       Professor          @relation(fields: [professorId], references: [usuarioId])
+  reads           NotificationRead[]
+}
+
+model NotificationRead {
+  id             Int       @id @default(autoincrement())
+  notificationId Int
+  alunoId        Int
+  read_at        DateTime  @default(now())
+
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  aluno          Aluno        @relation(fields: [alunoId], references: [usuarioId])
+
+  @@unique([notificationId, alunoId])
+}
