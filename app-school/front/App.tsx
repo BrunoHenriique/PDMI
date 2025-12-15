@@ -14,6 +14,8 @@ import GerenciarNotas from './pages/GerenciarNotas';
 import MatricularAluno from './pages/MatricularAluno';
 import NotificationsProfessor from './pages/notifications-professor';
 import NotificationsStudent from './pages/notifications-student';
+import UpdateProfileAluno from './pages/UpdateProfileAluno';
+import UpdateProfileProfessor from './pages/UpdateProfileProfessor';
 
 type AppState = 
   | 'loading'
@@ -25,7 +27,9 @@ type AppState =
   | 'gerenciar-notas'
   | 'matricular-alunos'
   | 'notifications-professor'
-  | 'notifications-student';
+  | 'notifications-student'
+  | 'update-profile-aluno'
+  | 'update-profile-professor';
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>('loading');
@@ -71,6 +75,8 @@ export default function App() {
   const navigateToNotificationsProfessor = () => setAppState('notifications-professor');
   const navigateToNotificationsStudent = () => setAppState('notifications-student');
   const navigateToAlunoDashboard = () => setAppState('aluno-dashboard');
+  const navigateToUpdateProfileAluno = () => setAppState('update-profile-aluno');
+  const navigateToUpdateProfileProfessor = () => setAppState('update-profile-professor');
 
   const renderCurrentScreen = () => {
     switch (appState) {
@@ -109,6 +115,7 @@ export default function App() {
           <AlunoHome 
             onLogout={handleLogout}
             onNavigateToNotifications={navigateToNotificationsStudent}
+            onNavigateToProfile={navigateToUpdateProfileAluno}
           />
         );
 
@@ -119,6 +126,7 @@ export default function App() {
             onNavigateToNotas={navigateToNotas}
             onNavigateToMatriculas={navigateToMatriculas}
             onNavigateToNotifications={navigateToNotificationsProfessor}
+            onNavigateToProfile={navigateToUpdateProfileProfessor}
           />
         );
 
@@ -147,6 +155,20 @@ export default function App() {
         return (
           <NotificationsStudent 
             onBack={navigateToAlunoDashboard}
+          />
+        );
+
+      case 'update-profile-aluno':
+        return (
+          <UpdateProfileAluno 
+            navigation={{ goBack: navigateToAlunoDashboard }}
+          />
+        );
+
+      case 'update-profile-professor':
+        return (
+          <UpdateProfileProfessor 
+            navigation={{ goBack: navigateToProfessorDashboard }}
           />
         );
 

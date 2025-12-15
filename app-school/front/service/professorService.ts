@@ -12,7 +12,12 @@ class ProfessorService {
     return response.data;
   }
 
-  async update(professorData: { usuarioId: number; nome?: string; email?: string }) {
+  async getById(usuarioId: number) {
+    const response = await api.get(`/professor/${usuarioId}`);
+    return response.data;
+  }
+
+  async update(professorData: { usuarioId: number; nome?: string; email?: string; senha?: string }) {
     const response = await api.put('/professor', professorData);
     return response.data;
   }

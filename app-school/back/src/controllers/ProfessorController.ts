@@ -58,20 +58,91 @@ class ProfessorController {
       res.status(500).json({ message: 'Erro ao excluir professor', error });
     }
   }
+
+  public async getById(req: Request, res: Response): Promise<any> {
+    const { usuarioId } = req.params;
+    
+    if (!usuarioId) {
+      return res.status(400).json({ message: 'ID do usuário é obrigatório' });
+    }
+
+    try {
+      const professor = await prisma.usuario.findFirst({
+        where: {
+          id: parseInt(usuarioId),
+          tipo: 'PROFESSOR'
+        },
+        include: {
+          professor: true
+        }
+      });
+
+      if (!professor) {
+        return res.status(404).json({ message: 'Professor não encontrado' });
+      }
+
+      // Remover senha do retorno
+      const { senha, ...userWithoutPassword } = professor;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      console.error('Erro ao buscar professor:', error);
+      res.status(500).json({ message: 'Erro ao buscar professor', error: error.message });
+    }
+  }
   
   public async update(req: Request, res: Response): Promise<any> {
-    const { usuarioId, nome, email } = req.body;  // idem
+    const { usuarioId, nome, email, senha } = req.body;
+    
+    console.log('Dados recebidos para atualização:', { usuarioId, nome, email });
+    
+    // Validações
+    if (!usuarioId) {
+      return res.status(400).json({ message: 'ID do usuário é obrigatório' });
+    }
+    
+    if (nome && (nome.trim().length < 2 || nome.trim().length > 100)) {
+      return res.status(400).json({ message: 'Nome deve ter entre 2 e 100 caracteres' });
+    }
+    
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ message: 'Email inválido' });
+    }
+    
+    if (senha && senha.length < 6) {
+      return res.status(400).json({ message: 'Senha deve ter pelo menos 6 caracteres' });
+    }
+
     try {
-      const updated = await prisma.professor.update({
-        where: { usuarioId },
-        data: { usuario: { update: { nome, email } } },
+      // Preparar dados para atualização
+      const updateData: any = {};
+      
+      if (nome) updateData.nome = nome.trim();
+      if (email) updateData.email = email.trim();
+      if (senha) updateData.senha = await bcrypt.hash(senha, 8);
+
+      const updated = await prisma.usuario.update({
+        where: { 
+          id: usuarioId,
+          tipo: 'PROFESSOR'
+        },
+        data: updateData,
+        include: {
+          professor: true
+        }
       });
-      res.json(updated);
+      
+      // Remover senha do retorno
+      const { senha: _, ...userWithoutPassword } = updated;
+      res.json({ message: 'Dados atualizados com sucesso', usuario: userWithoutPassword });
     } catch (error: any) {
-      if (error.code === 'P2002') {
-        return res.status(400).json({ message: 'CPF ou e-Mail já em uso' });
+      console.error('Erro ao atualizar professor:', error);
+      if (error.code === 'P2025') {
+        return res.status(404).json({ message: 'Professor não encontrado' });
       }
-      res.status(500).json({ message: 'Erro ao atualizar professor', error });
+      if (error.code === 'P2002') {
+        return res.status(400).json({ message: 'Email já em uso' });
+      }
+      res.status(500).json({ message: 'Erro ao atualizar professor', error: error.message });
     }
   }
   

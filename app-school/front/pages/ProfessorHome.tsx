@@ -22,9 +22,10 @@ interface ProfessorHomeProps {
   onNavigateToNotas: () => void;
   onNavigateToMatriculas: () => void;
   onNavigateToNotifications: () => void;
+  onNavigateToProfile: () => void;
 }
 
-export default function ProfessorHome({ onLogout, onNavigateToNotas, onNavigateToMatriculas, onNavigateToNotifications }: ProfessorHomeProps) {
+export default function ProfessorHome({ onLogout, onNavigateToNotas, onNavigateToMatriculas, onNavigateToNotifications, onNavigateToProfile }: ProfessorHomeProps) {
   const [disciplinas, setDisciplinas] = useState<Disciplina[]>([]);
   const [alunos, setAlunos] = useState<Aluno[]>([]);
   const [matriculas, setMatriculas] = useState<MatriculaAluno[]>([]);
@@ -174,6 +175,25 @@ export default function ProfessorHome({ onLogout, onNavigateToNotas, onNavigateT
       </View>
 
       <ScrollView style={styles.content}>
+        {/* Botões de Navegação */}
+        <View style={styles.navigationSection}>
+          <TouchableOpacity 
+            style={styles.navigationButton} 
+            onPress={onNavigateToNotifications}
+          >
+            <Text style={styles.navigationIcon}>📬</Text>
+            <Text style={styles.navigationText}>Notificações</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.navigationButton} 
+            onPress={onNavigateToProfile}
+          >
+            <Text style={styles.navigationIcon}>👤</Text>
+            <Text style={styles.navigationText}>Perfil</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Disciplinas</Text>
@@ -324,6 +344,29 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
+  },
+  navigationSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  navigationButton: {
+    backgroundColor: '#28a745',
+    flex: 0.48,
+    alignItems: 'center',
+    padding: 15,
+    borderRadius: 10,
+    elevation: 2,
+  },
+  navigationIcon: {
+    fontSize: 24,
+    marginBottom: 8,
+  },
+  navigationText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   section: {
     marginBottom: 30,

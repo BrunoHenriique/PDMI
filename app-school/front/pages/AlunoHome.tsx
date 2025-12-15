@@ -15,9 +15,10 @@ import { MatriculaAluno } from '../service/types';
 interface AlunoHomeProps {
   onLogout: () => void;
   onNavigateToNotifications: () => void;
+  onNavigateToProfile: () => void;
 }
 
-export default function AlunoHome({ onLogout, onNavigateToNotifications }: AlunoHomeProps) {
+export default function AlunoHome({ onLogout, onNavigateToNotifications, onNavigateToProfile }: AlunoHomeProps) {
   const [matriculas, setMatriculas] = useState<MatriculaAluno[]>([]);
   const [loading, setLoading] = useState(false);
   const [alunoId, setAlunoId] = useState<number | null>(null);
@@ -95,15 +96,24 @@ export default function AlunoHome({ onLogout, onNavigateToNotifications }: Aluno
       </View>
 
       <ScrollView style={styles.content}>
-        {/* Botão de Notificações */}
-        <TouchableOpacity 
-          style={styles.notificationsButton} 
-          onPress={onNavigateToNotifications}
-        >
-          <Text style={styles.notificationsIcon}>📬</Text>
-          <Text style={styles.notificationsText}>Ver Notificações</Text>
-          <Text style={styles.notificationsArrow}>→</Text>
-        </TouchableOpacity>
+        {/* Botões de Navegação */}
+        <View style={styles.navigationSection}>
+          <TouchableOpacity 
+            style={styles.navigationButton} 
+            onPress={onNavigateToNotifications}
+          >
+            <Text style={styles.navigationIcon}>📬</Text>
+            <Text style={styles.navigationText}>Notificações</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.navigationButton} 
+            onPress={onNavigateToProfile}
+          >
+            <Text style={styles.navigationIcon}>👤</Text>
+            <Text style={styles.navigationText}>Perfil</Text>
+          </TouchableOpacity>
+        </View>
 
         {loading ? (
           <Text style={styles.loadingText}>Carregando...</Text>
@@ -230,28 +240,28 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  notificationsButton: {
-    backgroundColor: '#007bff',
+  navigationSection: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  navigationButton: {
+    backgroundColor: '#007bff',
+    flex: 0.48,
     alignItems: 'center',
     padding: 15,
     borderRadius: 10,
-    marginBottom: 20,
     elevation: 2,
   },
-  notificationsIcon: {
+  navigationIcon: {
     fontSize: 24,
-    marginRight: 15,
+    marginBottom: 8,
   },
-  notificationsText: {
+  navigationText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
-    flex: 1,
-  },
-  notificationsArrow: {
-    color: '#fff',
-    fontSize: 18,
+    textAlign: 'center',
   },
   loadingText: {
     textAlign: 'center',

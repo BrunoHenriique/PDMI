@@ -12,7 +12,12 @@ class AlunoService {
     return response.data;
   }
 
-  async update(alunoData: { usuarioId: number; nome?: string; email?: string; matricula?: string }) {
+  async getById(usuarioId: number) {
+    const response = await api.get(`/aluno/${usuarioId}`);
+    return response.data;
+  }
+
+  async update(alunoData: { usuarioId: number; nome?: string; email?: string; senha?: string; matricula?: string }) {
     const response = await api.put('/aluno', alunoData);
     return response.data;
   }
